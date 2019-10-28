@@ -1,0 +1,34 @@
+Matthew Menten
+Eli Jacobshagen
+CSCI 5/4448 - OOAD - Montgomery
+Fall 2019
+
+-------------------------
+SEMESTER PROJECT OUTLINE
+-------------------------
+
+https://www.pyimagesearch.com/2018/06/18/face-recognition-with-opencv-python-and-deep-learning/
+
+High Level Objects:
+    - App (QApplication)
+    - MainWindow (QMainWindow)
+    - CentralWidget (QWidget)
+    - AppEngine (QObject)
+    - Various Other Widgets (QWidget)
+    - VideoStreamer
+    - Database
+
+Responsibilities:
+    - App
+        * Holds and initializes the main graphics window (MainWindow object)
+        * Executed on startup to kick off the application
+    - MainWindow
+        * Holds menu bar (File, Edit, etc...)
+        * Handles interaction with the menu bar (What happens when dropdown options are clicked)
+        * Holds the CentralWidget object (Displaying video)
+    - CentralWidget
+        * Defines main graphics layout (holds widgets to display video stream from Pi, etc.)
+        * Holds Various Other Widgets and switching application context b/t them
+        * Holds the AppEngine
+    - AppEngine
+        * todo
