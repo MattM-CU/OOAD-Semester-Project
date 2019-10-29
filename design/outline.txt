@@ -16,7 +16,9 @@ High Level Objects:
     - AppEngine (QObject)
     - Various Other Widgets (QWidget)
     - VideoStreamer
+    - FaceRecognizer
     - Database
+    - AlertObserver (stretch goal)
 
 Responsibilities:
     - App
@@ -31,4 +33,29 @@ Responsibilities:
         * Holds Various Other Widgets and switching application context b/t them
         * Holds the AppEngine
     - AppEngine
-        * todo
+        * Orchestrates communication between the different components
+        * Receives video stream from VideoStreamer object
+        * Uses FaceRecognizer object to determine faces in the stream
+        * Holds the Database object and uses it to perform queries for known faces
+        * Sends face-recognized video to the Central Widget for display
+        * Notifies AlertObserver when faces are detected (stretch goal)
+        * Reduces spaghett
+    - VideoStreamer
+        * Object to represent the Raspberry Pi sending a video stream to the application
+        * Connects to the Pi using a TCP socket
+        * Handles data (video stream) coming from the Pi and sends it to the AppEngine for processing
+    - Database
+        * Abstracts interaction with the database (type of database, running queries, returning results, error handling)
+    - AlertObserver (stretch goal)
+        * Observes the AppEngine and is notified when faces are detected
+        * Sends some kind of alert to subscribers (email or text message if possible)
+
+Other Thoughts:
+    - We're probably going to have functionality for wiping all known faces from our database (use case)
+    - Adding a new face using the Pi camera over TCP connection might prove challenging
+    - I'm not sure how to send emails or texts from Python for the AlertObserver, we should do some research
+    - We're probably going to have pop-up message boxes for errors and general information. This is easy in Qt.
+    - I'm thinking we store faces in the DB using that "face fingerprint" value as the PK
+    - I'm not exactly sure how we're going to connect to the Pi on start-up. We might be able to do it automatically,
+      but we might need to have an input thing at the beginning where you enter an address. This will affect use cases.
+
