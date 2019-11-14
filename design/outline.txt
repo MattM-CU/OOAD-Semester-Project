@@ -2,6 +2,7 @@ Matthew Menten
 Eli Jacobshagen
 CSCI 5/4448 - OOAD - Montgomery
 Fall 2019
+Semester Project - Facial Recognition w. Raspberry Pi
 
 -------------------------
 SEMESTER PROJECT OUTLINE
