@@ -98,27 +98,3 @@ class VideoWidget(QWidget):
     #     video_streamer.changeFrame.connect(self.setImage)
     #
     #     video_streamer.start()
-
-
-#
-# class App(QWidget):
-#     def __init__(self):
-#         super().__init__()
-#         [...]
-#         self.initUI()
-#
-#     @pyqtSlot(QImage)
-#     def setImage(self, image):
-#         self.label.setPixmap(QPixmap.fromImage(image))
-#
-#     def initUI(self):
-#         self.setWindowTitle(self.title)
-#         self.setGeometry(self.left, self.top, self.width, self.height)
-#         self.resize(1800, 1200)
-#         # create a label
-#         self.label = QLabel(self)
-#         self.label.move(280, 120)
-#         self.label.resize(640, 480)
-#         th = Thread(self)
-#         th.changePixmap.connect(self.setImage)
-#         th.start()

@@ -4,6 +4,7 @@
 # Fall 2019
 # Semester Project - Facial Recognition w. Raspberry Pi
 
+
 import sqlite3 as dbInterface
 
 
@@ -18,11 +19,9 @@ class Database(object):
         # A cursor from the database connection
         self.cursor = self.dbConnection.cursor()
 
-    def createDatabase(self):
+    def createDatabase(self, create_sql):
 
-        # TODO - sql string for each table
-        sql = ""
-        self.executeNonQuery(sql, variables=[])
+        self.executeNonQuery(create_sql, variables=[])
 
     def executeNonQuery(self, sql, variables):
         """Private method.  If a database connection and cursor are available,
@@ -104,8 +103,13 @@ class Database(object):
             self.dbConnection.close()
 
     def wipeDatabase(self):
-        # TODO - change be more abstract: iterate over all tables and drop each
-        pass
+
+        tables = self.executeQuery("SELECT name FROM sqlite_master WHERE type = ?", variables=['table'])
+
+        for table in tables:
+            table_name = table['name']
+            sql = "DROP TABLE " + table_name
+            self.executeNonQuery(sql, variables=[])
 
 
 class DatabaseError(Exception):

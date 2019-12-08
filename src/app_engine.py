@@ -11,7 +11,8 @@ from numpy import ndarray
 from db_connect import Database
 from video_streamer import VideoStreamer
 from face_recognizer import FaceRecognizer
-import cv2
+# import cv2
+import pickle
 
 
 class AppEngine(QObject):
@@ -23,17 +24,19 @@ class AppEngine(QObject):
 
 		super().__init__()
 
-		# self.database = Database()
-		# todo - make sure database is created here
+		self.database = Database('../data/face_data.db')
 
+		# ensure appropriate table is created
+		create_sql = "CREATE TABLE IF NOT EXISTS faces (FaceName TEXT PRIMARY KEY," \
+					 "FaceEncodings BLOB NOT NULL)"
+		self.database.createDatabase(create_sql)
 
 		self.videoStreamer = VideoStreamer()
-
-		# todo - connect change frame signal to appropriate method
 		self.videoStreamer.newPiFrame.connect(self.faceRecognizeFrame)
 
-		# todo - make the face recognizer
 		self.faceRecognizer = FaceRecognizer()
+
+		self.alertObserver = None  # TODO
 
 	def connectToPi(self, pi_address):
 
@@ -48,10 +51,21 @@ class AppEngine(QObject):
 
 		self.changeFrame.emit(overlayed_img)
 
+		# todo - check for unknown in names, signal observer if found
 
+	def addFaceToDb(self, name, encodings):
 
-		
+		# name - str
+		# encodings - list of lists
+		encodings_bytes = pickle.dumps(encodings)
 
+		sql = "INSERT INTO faces (FaceName, FaceEncodings) VALUES (?, ?)"
 
+		self.database.executeNonQuery(sql, variables=[name, encodings_bytes])
 
+	def deleteFaceFromDb(self, name):
+
+		sql = "DELETE FROM faces WHERE FaceName = ?"
+
+		self.database.executeNonQuery(sql, variables=[name])
 

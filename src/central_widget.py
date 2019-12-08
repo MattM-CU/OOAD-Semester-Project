@@ -55,7 +55,6 @@ class CentralWidget(QWidget):
 
         self.videoWidget.videoSetup()
 
-        # todo - change to engine method
         self.engine.connectToPi(pi_address)
 
         self.mainLayout.setCurrentIndex(1)
