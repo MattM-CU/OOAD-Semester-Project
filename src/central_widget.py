@@ -6,7 +6,9 @@
 
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QStackedLayout
 from PyQt5.QtCore import pyqtSlot
+from numpy import ndarray
 from minor_widgets import ConnectToPiWidget, VideoWidget
+from app_engine import AppEngine
 import time
 
 
@@ -28,7 +30,8 @@ class CentralWidget(QWidget):
         super().__init__()
 
         # Placeholder for future object
-        self.engine = None
+        self.engine = AppEngine()
+        self.engine.changeFrame.connect(self.setVideoWidgetFrame)
 
         # -------------------------------
         # Layouts and widgets go here
@@ -50,6 +53,14 @@ class CentralWidget(QWidget):
     @pyqtSlot(str)
     def initVideo(self, pi_address):
 
-        self.videoWidget.connectToPi(pi_address)
+        self.videoWidget.videoSetup()
+
+        # todo - change to engine method
+        self.engine.connectToPi(pi_address)
 
         self.mainLayout.setCurrentIndex(1)
+
+    @pyqtSlot(ndarray)
+    def setVideoWidgetFrame(self, overlayed_img):
+
+        self.videoWidget.setImage(overlayed_img)

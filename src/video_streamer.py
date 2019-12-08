@@ -8,13 +8,14 @@ from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtGui import QImage, QTransform
 # import socket
 import subprocess
-import numpy as np
+from numpy import ndarray
 import cv2
 
 # https://picamera.readthedocs.io/en/release-1.10/recipes1.html
 class VideoStreamer(QThread):
 
-    changeFrame = pyqtSignal(QImage)
+    # changeFrame = pyqtSignal(QImage)
+    newPiFrame = pyqtSignal(ndarray)
 
     def __init__(self):
         super().__init__()
@@ -41,21 +42,16 @@ class VideoStreamer(QThread):
                 # time.sleep(0.1)
                 break
 
-            # Our operations on the frame come here
-            # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-            # Display the resulting frame
-            # cv2.imshow('frame', gray)
-
-            rotate180 = QTransform().rotate(180)
+            # rotate180 = QTransform().rotate(180)
 
             # https://stackoverflow.com/questions/34232632/convert-python-opencv-image-numpy-array-to-pyqt-qpixmap-image
-            height, width, channel = frame.shape
-            bytesPerLine = 3 * width
+            # height, width, channel = frame.shape
+            # bytesPerLine = 3 * width
+            #
+            # qtImageFrame = QImage(frame.data, width, height, bytesPerLine, QImage.Format_RGB888).rgbSwapped().transformed(rotate180)
 
-            qtImageFrame = QImage(frame.data, width, height, bytesPerLine, QImage.Format_RGB888).rgbSwapped().transformed(rotate180)
-
-            self.changeFrame.emit(qtImageFrame)
+            # self.changeFrame.emit(qtImageFrame)
+            self.newPiFrame.emit(frame)
 
             # if cv2.waitKey(1) & 0xFF == ord('q'):
             #     break

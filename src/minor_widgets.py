@@ -5,7 +5,7 @@
 # Semester Project - Facial Recognition w. Raspberry Pi
 
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton
-from PyQt5.QtGui import QFont, QImage, QPixmap
+from PyQt5.QtGui import QFont, QImage, QPixmap, QTransform
 from PyQt5.QtCore import pyqtSlot, pyqtSignal
 from video_streamer import VideoStreamer
 import re
@@ -61,22 +61,31 @@ class VideoWidget(QWidget):
 
         self.label = QLabel(self)
 
-        self.video_streamer = VideoStreamer()
-        self.video_streamer.changeFrame.connect(self.setImage)
+        # self.video_streamer = VideoStreamer()
+        # self.video_streamer.changeFrame.connect(self.setImage)
 
-    def connectToPi(self, pi_address):
+    def videoSetup(self):
 
         self.label.resize(640, 480)
 
-        self.video_streamer.setPiAddress(pi_address)
+        # self.video_streamer.setPiAddress(pi_address)
 
-        self.video_streamer.start()
+        # self.video_streamer.start()
 
         self.setFixedSize(640, 480)
 
-    @pyqtSlot(QImage)
+    # @pyqtSlot(QImage)
     def setImage(self, image):
-        self.label.setPixmap(QPixmap.fromImage(image))
+
+        # rotate180 = QTransform().rotate(180)
+        #
+        # # https://stackoverflow.com/questions/34232632/convert-python-opencv-image-numpy-array-to-pyqt-qpixmap-image
+        height, width, channel = image.shape
+        bytesPerLine = 3 * width
+
+        qtImage = QImage(image.data, width, height, bytesPerLine, QImage.Format_RGB888).rgbSwapped()#.transformed(rotate180)
+
+        self.label.setPixmap(QPixmap.fromImage(qtImage))
 
     # def setupImgDisplay(self):
     #
