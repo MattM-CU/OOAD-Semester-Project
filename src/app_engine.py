@@ -58,24 +58,32 @@ class AppEngine(QObject):
 
 	def getAllFaceInfoFromDb(self):
 
+		face_names = list()
+		face_encodings = list()
+
 		sql = "SELECT * FROM faces"
 
 		results = self.database.executeQuery(sql, variables=[])
 
 		for row in results:
-			row['FaceEncodings'] = pickle.loads(row['FaceEncodings'])
 
-			print(row['FaceEncodings'])
+			current_face_encodings = pickle.loads(eval(row['FaceEncodings']))
 
-		return results
+			face_names = face_names + ([row['FaceName']] * len(current_face_encodings))
+
+			# https://stackoverflow.com/questions/52890916/python3-unpickle-a-string-representation-of-bytes-object
+			face_encodings = face_encodings + current_face_encodings
+
+		# face encodings list needs to be flattened (b/c each sublist is only length 1)
+		return face_names, [encoding[0] for encoding in face_encodings]
 
 	def connectToPi(self, pi_address):
 
 		self.videoStreamer.setPiAddress(pi_address)
 
-		known_faces = self.getAllFaceInfoFromDb()
+		known_names, known_encodings = self.getAllFaceInfoFromDb()
 
-		self.faceRecognizer.updateKnownFaces(known_faces)
+		self.faceRecognizer.updateKnownFaces(known_names, known_encodings)
 
 		self.videoStreamer.start()
 
@@ -99,6 +107,8 @@ class AppEngine(QObject):
 
 		face_encoding = self.faceRecognizer.getImageFaceEncoding(self.currentFrame)
 
+		print(face_encoding)
+
 		self.currentAddFaceEncodings.append(face_encoding)
 
 	def checkNameExistenceInDb(self, name):
@@ -114,8 +124,6 @@ class AppEngine(QObject):
 
 	def addFaceToDb(self):
 
-		print("Face added!")
-
 		# name - str
 		# encodings - list of lists
 		encodings_bytes = pickle.dumps(self.currentAddFaceEncodings)
@@ -126,6 +134,8 @@ class AppEngine(QObject):
 
 		self.currentAddFaceEncodings = list()
 		self.currentAddFaceName = None
+
+		print("Face added!")
 
 	def deleteFaceFromDb(self, name):
 

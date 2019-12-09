@@ -89,38 +89,40 @@ class MainWindow(QMainWindow):
 
 	def addNewFace(self):
 
-		# if not self.mainWidget.isConnectedToPi():
-		#
-		# 	QMessageBox.information(self, "Not Connected To Pi", "You must connect to the Pi before adding a new face.")
+		if not self.mainWidget.isConnectedToPi():
 
-		getNameDialog = GetFaceNameDialog("Enter a Name for the New Face", "Add")
+			QMessageBox.information(self, "Not Connected To Pi", "You must connect to the Pi before adding a new face.")
 
-		if (getNameDialog.exec() == getNameDialog.Accepted):
+		else:
 
-			new_face_name = getNameDialog.name
+			getNameDialog = GetFaceNameDialog("Enter a Name for the New Face", "Add")
 
-			if self.mainWidget.engine.checkNameExistenceInDb(new_face_name):
+			if (getNameDialog.exec() == getNameDialog.Accepted):
 
-				QMessageBox.warning(self, "Name Already Exists", "This face name is already present in the database.")
+				new_face_name = getNameDialog.name
 
-			else:
-				self.file_recognize_faces.setChecked(False)
-				self.mainWidget.engine.setFacialRecognitionState(False)
+				if self.mainWidget.engine.checkNameExistenceInDb(new_face_name):
 
-				self.file_recognize_faces.setEnabled(False)
+					QMessageBox.warning(self, "Name Already Exists", "This face name is already present in the database.")
 
-				self.mainWidget.engine.setCurrentAddFaceName(new_face_name)
+				else:
+					self.file_recognize_faces.setChecked(False)
+					self.mainWidget.engine.setFacialRecognitionState(False)
 
-				# logic for capturing images
-				if (self.captureFaceImagesDialog.exec() == self.captureFaceImagesDialog.Accepted):
+					self.file_recognize_faces.setEnabled(False)
 
-					print("Done capturing images.")
+					self.mainWidget.engine.setCurrentAddFaceName(new_face_name)
 
-					# todo - make sure CurrentAddFaceName is set to None somewhere
-					self.mainWidget.engine.addFaceToDb()
+					# logic for capturing images
+					if (self.captureFaceImagesDialog.exec() == self.captureFaceImagesDialog.Accepted):
 
-					self.file_recognize_faces.setEnabled(True)
-				# todo
+						print("Done capturing images.")
+
+						# todo - make sure CurrentAddFaceName is set to None somewhere
+						self.mainWidget.engine.addFaceToDb()
+
+						self.file_recognize_faces.setEnabled(True)
+					# todo
 
 	def deleteFace(self):
 
