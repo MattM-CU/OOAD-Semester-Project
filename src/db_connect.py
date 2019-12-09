@@ -8,10 +8,23 @@
 import sqlite3 as dbInterface
 
 
-# CREDIT: Dave Wescott (structure of executeQuery/NonQuery)
-class Database(object):
+# PARTIAL CREDIT: Dave Wescott (structure of executeQuery/NonQuery)
+class Database:
+    """
+    Database class
+
+    INPUTS:  None.
+    OUTPUTS: None.
+
+    Notes: This object abstracts our database implementation and performing queries and non-queries.
+    """
 
     def __init__(self, dbName):
+        """Initialize the Database
+
+        Inputs:  dbName - string - the path to the database
+        Outputs: Creates an instance of the CentralWidget
+        """
 
         # A connection to the database
         self.dbConnection = dbInterface.connect(dbName)
@@ -20,11 +33,18 @@ class Database(object):
         self.cursor = self.dbConnection.cursor()
 
     def createDatabase(self, create_sql):
+        """
+        Database - createDatabase
+        :param create_sql: str
+        :return:
+
+        NOTES: simply performs a non-query which will create database tables
+        """
 
         self.executeNonQuery(create_sql, variables=[])
 
     def executeNonQuery(self, sql, variables):
-        """Private method.  If a database connection and cursor are available,
+        """If a database connection and cursor are available,
            execute the requested SQL statement.
 
            Input:  SQL statement <str>
@@ -42,7 +62,7 @@ class Database(object):
                 raise DatabaseError("Failed to execute SQL statement.  " + str(error))
 
     def executeQuery(self, sql, variables):
-        """Private method.  If a database connection and cursor are available,
+        """If a database connection and cursor are available,
            execute the requested SQL query statement.
 
            Input:  SQL query statement <str>
@@ -103,9 +123,17 @@ class Database(object):
             self.dbConnection.close()
 
     def wipeDatabase(self):
+        """
+        Database - wipeDatabase
+        :return:
 
+        NOTES: Iterates over all tables and drops each.
+        """
+
+        # get all the table names present in the database
         tables = self.executeQuery("SELECT name FROM sqlite_master WHERE type = ?", variables=['table'])
 
+        # iterate over table names and drop each
         for table in tables:
             table_name = table['name']
             sql = "DROP TABLE " + table_name

@@ -4,6 +4,7 @@
 # Fall 2019
 # Semester Project - Facial Recognition w. Raspberry Pi
 
+
 import sys
 from PyQt5.QtWidgets import QApplication
 from main_window import MainWindow
@@ -33,9 +34,8 @@ class App(QApplication):
 		# Set the application name
 		self.setApplicationName("Facial Recognition App")
 
-		# Create the main    window
+		# Create the main window
 		self.mainWindow = MainWindow()
-
 
 		# Show the main window
 		# Note: show() is non-blocking, exec() is blocking

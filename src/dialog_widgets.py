@@ -12,7 +12,6 @@ from PyQt5.QtCore import pyqtSignal
 
 class GetFaceNameDialog(QDialog):
 
-    # newFaceName = pyqtSignal(str)
 
     def __init__(self, label_text, button_text):
 
