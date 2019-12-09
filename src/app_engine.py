@@ -91,6 +91,17 @@ class AppEngine(QObject):
 
 		self.currentAddFaceName = name
 
+	def resetCurrentAddFaceData(self):
+		"""
+		AppEngine - resetCurrentAddFaceData
+		:return:
+
+		NOTES: resets the members holding info for a new face to be added.
+		"""
+
+		self.currentAddFaceName = None
+		self.currentAddFaceEncodings = list()
+
 	def setFacialRecognitionState(self, state_bool):
 		"""
 		AppEngine - setFacialRecognitionState
@@ -268,8 +279,7 @@ class AppEngine(QObject):
 		self.database.executeNonQuery(sql, variables=[self.currentAddFaceName, encodings_bytes])
 
 		# reset the AppEngine's data so that another named face can be added
-		self.currentAddFaceEncodings = list()
-		self.currentAddFaceName = None
+		self.resetCurrentAddFaceData()
 
 		# update the FaceRecognizer's data so that it can recognize the new face
 		self.updateFaceRecognizerData()

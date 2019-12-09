@@ -22,7 +22,7 @@ class CentralWidget(QWidget):
     """
 
     def __init__(self):
-        """Initialize the central widget
+        """Initialize the CentralWidget
 
         Inputs:  None.
         Outputs: Creates an instance of the CentralWidget
