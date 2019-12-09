@@ -10,6 +10,7 @@ from PyQt5.QtGui import QImage, QTransform
 import subprocess
 from numpy import ndarray
 import cv2
+import time
 
 # https://picamera.readthedocs.io/en/release-1.10/recipes1.html
 class VideoStreamer(QThread):
@@ -56,6 +57,7 @@ class VideoStreamer(QThread):
 
             self.newPiFrame.emit(frame)
 
+            time.sleep(0.15)
             # if cv2.waitKey(1) & 0xFF == ord('q'):
             #     break
 

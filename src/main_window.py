@@ -97,10 +97,6 @@ class MainWindow(QMainWindow):
 			# Add number to mainWidget AlertObserver Object
 			self.mainWidget.engine.addObserver(added_phone_number)
 
-			if len(self.mainWidget.engine.alertObserver.observers) >= 1:
-				print("CURRENT OBSERVER LIST: {}".format(self.mainWidget.engine.alertObserver.observers))
-
-
 	def addNewFace(self):
 
 		if not self.mainWidget.isConnectedToPi():

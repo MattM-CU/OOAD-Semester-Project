@@ -45,6 +45,8 @@ class AppEngine(QObject):
 
 		self.alertObserver = AlertObserver()
 
+		self.alertSent = False
+
 	def setCurrentFrame(self, frame):
 
 		self.currentFrame = frame
@@ -82,11 +84,15 @@ class AppEngine(QObject):
 
 		self.videoStreamer.setPiAddress(pi_address)
 
+		self.updateFaceRecognizerData()
+
+		self.videoStreamer.start()
+
+	def updateFaceRecognizerData(self):
+		
 		known_names, known_encodings = self.getAllFaceInfoFromDb()
 
 		self.faceRecognizer.updateKnownFaces(known_names, known_encodings)
-
-		self.videoStreamer.start()
 
 	# consider changing name of this method
 	@pyqtSlot(ndarray)
@@ -96,15 +102,17 @@ class AppEngine(QObject):
 
 		if self.performFacialRecognition:
 
-			cv_img = self.faceRecognizer.findImageFaces(cv_img) #names
+			cv_img, names = self.faceRecognizer.findImageFaces(cv_img)
+
+			if not self.alertSent:
+				if "Unknown" in names:
+					try:
+						self.alertObserver.alertObservers()
+					except Exception:
+						pass
+					self.alertSent = True
 
 		self.changeFrame.emit(cv_img)
-
-		# todo - check for unknown in names, signal observer if found
-		if self.yes_alert:
-			if "UNKNOWN" in names:
-				self.alertObserver.alertObservers()
-
 
 	def recognizeAndRecordCurrentFrame(self):
 
@@ -112,7 +120,7 @@ class AppEngine(QObject):
 
 		face_encoding = self.faceRecognizer.getImageFaceEncoding(self.currentFrame)
 
-		print(face_encoding)
+		#print(face_encoding)
 
 		self.currentAddFaceEncodings.append(face_encoding)
 
@@ -143,13 +151,15 @@ class AppEngine(QObject):
 		self.currentAddFaceEncodings = list()
 		self.currentAddFaceName = None
 
-		print("Face added!")
+		self.updateFaceRecognizerData()
 
 	def deleteFaceFromDb(self, name):
 
 		sql = "DELETE FROM faces WHERE FaceName = ?"
 
 		self.database.executeNonQuery(sql, variables=[name])
+
+		self.updateFaceRecognizerData()
 
 	def deleteAllFacesFromDb(self):
 
@@ -159,6 +169,8 @@ class AppEngine(QObject):
 					 "FaceEncodings BLOB NOT NULL)"
 
 		self.database.createDatabase(create_sql)
+
+		self.updateFaceRecognizerData()
 
 
 

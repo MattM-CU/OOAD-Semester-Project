@@ -37,7 +37,7 @@ class FaceRecognizer(QObject):
         rgb = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
 
         # face detection model to use: either `hog` or `cnn`
-        boxes = face_recognition.face_locations(rgb, model='hog')
+        boxes = face_recognition.face_locations(rgb, model='cnn')
 
         encodings = face_recognition.face_encodings(rgb, boxes)
 
@@ -87,7 +87,7 @@ class FaceRecognizer(QObject):
         #     cv2.putText(cv_img, "UNKNOWN", (left, y), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2)
 
         # self.newLabeledImg.emit(cv_img)
-        return cv_img
+        return cv_img, names
 
     def getImageFaceEncoding(self, cv_img):
 
@@ -95,7 +95,7 @@ class FaceRecognizer(QObject):
         rgb = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
 
         # face detection model to use: either `hog` or `cnn`
-        boxes = face_recognition.face_locations(rgb, model='hog')
+        boxes = face_recognition.face_locations(rgb, model='cnn')
 
         encoding = face_recognition.face_encodings(rgb, boxes)
 

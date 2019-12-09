@@ -24,7 +24,10 @@ class AlertObserver():
 
 	def addObserver(self, observer_number):
 		if observer_number:
-			self.observers.append(observer_number)
+			if observer_number not in self.observers:	
+				self.observers.append(observer_number)
+			else:
+				print("Number already registered!")
 		else:
 			print("Could not add number to the list of observers")
 
@@ -39,7 +42,7 @@ class AlertObserver():
 	def alertObservers(self):
 		if len(self.observers) >= 1:
 			for observer_number in self.observers:
-				#alertObserver(observer_number)
-				print("PRETENDING TO SEND SMS TO {}".format(observer_number))
+				self.alertObserver(observer_number)
+				#print("PRETENDING TO SEND SMS TO {}".format(observer_number))
 		else:
 			print("There are currently no observers to alert")
