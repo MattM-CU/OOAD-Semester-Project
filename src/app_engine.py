@@ -36,36 +36,111 @@ class AppEngine(QObject):
 
 		self.faceRecognizer = FaceRecognizer()
 
+		self.performFacialRecognition = False
+
+		self.currentFrame = None
+		self.currentAddFaceName = None
+		self.currentAddFaceEncodings = list()
+
 		self.alertObserver = None  # TODO
+
+	def setCurrentFrame(self, frame):
+
+		self.currentFrame = frame
+
+	def setCurrentAddFaceName(self, name):
+
+		self.currentAddFaceName = name
+
+	def setFacialRecognitionState(self, state_bool):
+
+		self.performFacialRecognition = state_bool
+
+	def getAllFaceInfoFromDb(self):
+
+		sql = "SELECT * FROM faces"
+
+		results = self.database.executeQuery(sql, variables=[])
+
+		for row in results:
+			row['FaceEncodings'] = pickle.loads(row['FaceEncodings'])
+
+			print(row['FaceEncodings'])
+
+		return results
 
 	def connectToPi(self, pi_address):
 
 		self.videoStreamer.setPiAddress(pi_address)
 
+		known_faces = self.getAllFaceInfoFromDb()
+
+		self.faceRecognizer.updateKnownFaces(known_faces)
+
 		self.videoStreamer.start()
 
+	# consider changing name of this method
 	@pyqtSlot(ndarray)
 	def faceRecognizeFrame(self, cv_img):
 
-		overlayed_img = self.faceRecognizer.findImageFaces(cv_img)
+		self.setCurrentFrame(cv_img)
 
-		self.changeFrame.emit(overlayed_img)
+		if self.performFacialRecognition:
+
+			cv_img = self.faceRecognizer.findImageFaces(cv_img)
+
+		self.changeFrame.emit(cv_img)
 
 		# todo - check for unknown in names, signal observer if found
 
-	def addFaceToDb(self, name, encodings):
+	def recognizeAndRecordCurrentFrame(self):
+
+		print(self.currentAddFaceName)
+
+		face_encoding = self.faceRecognizer.getImageFaceEncoding(self.currentFrame)
+
+		self.currentAddFaceEncodings.append(face_encoding)
+
+	def checkNameExistenceInDb(self, name):
+
+		sql = "SELECT FaceName FROM faces WHERE FaceName = ?"
+
+		db_response = self.database.executeQuery(sql, variables=[name])
+
+		if db_response:
+			return True
+		else:
+			return False
+
+	def addFaceToDb(self):
+
+		print("Face added!")
 
 		# name - str
 		# encodings - list of lists
-		encodings_bytes = pickle.dumps(encodings)
+		encodings_bytes = pickle.dumps(self.currentAddFaceEncodings)
 
 		sql = "INSERT INTO faces (FaceName, FaceEncodings) VALUES (?, ?)"
 
-		self.database.executeNonQuery(sql, variables=[name, encodings_bytes])
+		self.database.executeNonQuery(sql, variables=[self.currentAddFaceName, encodings_bytes])
+
+		self.currentAddFaceEncodings = list()
+		self.currentAddFaceName = None
 
 	def deleteFaceFromDb(self, name):
 
 		sql = "DELETE FROM faces WHERE FaceName = ?"
 
 		self.database.executeNonQuery(sql, variables=[name])
+
+	def deleteAllFacesFromDb(self):
+
+		self.database.wipeDatabase()
+
+		create_sql = "CREATE TABLE IF NOT EXISTS faces (FaceName TEXT PRIMARY KEY," \
+					 "FaceEncodings BLOB NOT NULL)"
+
+		self.database.createDatabase(create_sql)
+
+
 

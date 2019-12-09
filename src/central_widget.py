@@ -43,6 +43,8 @@ class CentralWidget(QWidget):
         self.connectWidget = ConnectToPiWidget()
         self.connectWidget.connectSignal.connect(self.initVideo)
 
+        self.connectedToPi = False
+
         self.mainLayout.addWidget(self.connectWidget)
 
         self.videoWidget = VideoWidget()
@@ -50,12 +52,18 @@ class CentralWidget(QWidget):
 
         self.mainLayout.setCurrentIndex(0)
 
+    def isConnectedToPi(self):
+
+        return self.connectedToPi
+
     @pyqtSlot(str)
     def initVideo(self, pi_address):
 
         self.videoWidget.videoSetup()
 
         self.engine.connectToPi(pi_address)
+
+        self.connectedToPi = True
 
         self.mainLayout.setCurrentIndex(1)
 

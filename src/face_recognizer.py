@@ -31,7 +31,7 @@ class FaceRecognizer(QObject):
 
         # SOURCE/CREDIT: https://www.pyimagesearch.com/2018/06/18/face-recognition-with-opencv-python-and-deep-learning/
 
-        cv_img = cv2.flip(cv_img, 0)
+        # cv_img = cv2.flip(cv_img, 0)
 
         # change pix format from BGR to RGB
         rgb = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
@@ -49,6 +49,20 @@ class FaceRecognizer(QObject):
 
         # self.newLabeledImg.emit(cv_img)
         return cv_img
+
+    def getImageFaceEncoding(self, cv_img):
+
+        # change pix format from BGR to RGB
+        rgb = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
+
+        # face detection model to use: either `hog` or `cnn`
+        boxes = face_recognition.face_locations(rgb, model='hog')
+
+        encoding = face_recognition.face_encodings(rgb, boxes)
+
+        return encoding
+
+
 
 
 

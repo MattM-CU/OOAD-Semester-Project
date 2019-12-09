@@ -51,6 +51,9 @@ class VideoStreamer(QThread):
             # qtImageFrame = QImage(frame.data, width, height, bytesPerLine, QImage.Format_RGB888).rgbSwapped().transformed(rotate180)
 
             # self.changeFrame.emit(qtImageFrame)
+
+            frame = cv2.flip(frame, 0)
+
             self.newPiFrame.emit(frame)
 
             # if cv2.waitKey(1) & 0xFF == ord('q'):
