@@ -14,7 +14,7 @@ and subscribe to receive SMS alerts for unknown faces on their phone.
 
 ### Requirements
 
-This application uses Python3 and PyQt5.
+This application uses __Python3__ and __PyQt5__.
 
 Before the first run...
 
