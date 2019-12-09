@@ -11,6 +11,7 @@ from numpy import ndarray
 from db_connect import Database
 from video_streamer import VideoStreamer
 from face_recognizer import FaceRecognizer
+from alert_observer import AlertObserver
 # import cv2
 import pickle
 
@@ -42,7 +43,7 @@ class AppEngine(QObject):
 		self.currentAddFaceName = None
 		self.currentAddFaceEncodings = list()
 
-		self.alertObserver = None  # TODO
+		self.alertObserver = AlertObserver()
 
 	def setCurrentFrame(self, frame):
 
@@ -95,11 +96,15 @@ class AppEngine(QObject):
 
 		if self.performFacialRecognition:
 
-			cv_img = self.faceRecognizer.findImageFaces(cv_img)
+			cv_img = self.faceRecognizer.findImageFaces(cv_img) #names
 
 		self.changeFrame.emit(cv_img)
 
 		# todo - check for unknown in names, signal observer if found
+		if self.yes_alert:
+			if "UNKNOWN" in names:
+				self.alertObserver.alertObservers()
+
 
 	def recognizeAndRecordCurrentFrame(self):
 
@@ -121,6 +126,9 @@ class AppEngine(QObject):
 			return True
 		else:
 			return False
+
+	def addObserver(self, observer_number):
+		self.alertObserver.addObserver(observer_number)
 
 	def addFaceToDb(self):
 

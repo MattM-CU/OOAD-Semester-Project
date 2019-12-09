@@ -6,7 +6,7 @@
 
 from PyQt5.QtWidgets import QMainWindow, QMenuBar, QAction, QMessageBox, QDialog
 from central_widget import CentralWidget
-from dialog_widgets import GetFaceNameDialog, CaptureFaceImagesDialog
+from dialog_widgets import GetFaceNameDialog, CaptureFaceImagesDialog, AddSubscriberDialog
 
 
 class MainWindow(QMainWindow):
@@ -85,7 +85,21 @@ class MainWindow(QMainWindow):
 			self.mainWidget.engine.setFacialRecognitionState(False)
 
 	def subscribeToAlerts(self):
-		pass
+		
+		getPhoneNumberDialog = AddSubscriberDialog()
+
+		if (getPhoneNumberDialog.exec() == getPhoneNumberDialog.Accepted):
+
+			added_phone_number = getPhoneNumberDialog.number
+
+			QMessageBox.information(self, "Number Added", "Alerts will now be sent to {}".format(added_phone_number))
+
+			# Add number to mainWidget AlertObserver Object
+			self.mainWidget.engine.addObserver(added_phone_number)
+
+			if len(self.mainWidget.engine.alertObserver.observers) >= 1:
+				print("CURRENT OBSERVER LIST: {}".format(self.mainWidget.engine.alertObserver.observers))
+
 
 	def addNewFace(self):
 

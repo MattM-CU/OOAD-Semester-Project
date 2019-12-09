@@ -115,4 +115,50 @@ class CaptureFaceImagesDialog(QDialog):
 
 
 
+class AddSubscriberDialog(QDialog):
 
+    def __init__(self):
+
+        super().__init__()
+
+        self.number = None
+
+        self.mainLayout = QVBoxLayout(self)
+
+        # Text label that will be at the top of the form
+        self.topLabel = QLabel("Subscribe to Alerts")
+
+        # make a bold font and add some margin so that the label stands out
+        boldFont = QFont()
+        boldFont.setBold(True)
+        # set bold font for the label
+        self.topLabel.setFont(boldFont)
+        self.topLabel.setMargin(15)
+
+        self.numberInput = QLineEdit()
+
+        self.numberInput.setPlaceholderText("+13031239876")
+
+
+        self.submitButton = QPushButton("Add Number")
+        self.submitButton.clicked.connect(self.validateOnSubmit)
+
+        self.mainLayout.addWidget(self.topLabel)
+        self.mainLayout.addWidget(self.numberInput)
+        self.mainLayout.addWidget(self.submitButton)
+
+    def validateOnSubmit(self):
+        new_number = self.numberInput.text()
+
+        if len(new_number) == 12:
+            if new_number[0] == '+' and new_number[1] == '1':
+
+                try:
+                    int(new_number[2:])
+                    self.number = new_number
+                    self.accept()
+                    return
+                except ValueError as Error:
+                    pass
+        #print(new_number)
+        QMessageBox.information(self, "Incorrect phone number format", "Acceptable input is of the form: <+19879879876>.\nThe number '{}' will not recieve alerts.".format(new_number))
